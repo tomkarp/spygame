@@ -127,7 +127,7 @@ view model =
         Countdown ->
             div []
                 [ p [] [ text "Ihr habt drei Minuten Zeit. Los geht's ..." ]
-                , button [ onClick Reset ] [ text "Neustart" ]
+                , button [ onClick Reset ] [ text "Neue Runde" ]
                 ]
 
 

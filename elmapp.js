@@ -11129,7 +11129,7 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Neustart')
+								$elm$html$Html$text('Neue Runde')
 							]))
 					]));
 	}
