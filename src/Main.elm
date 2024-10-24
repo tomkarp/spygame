@@ -83,11 +83,18 @@ view model =
     case model.status of
         Vorbereitung ->
             div []
-                [ h1 [] [ text "SpyGame" ]
-                , viewSpielerinfo model.anzahlSpieler
-                , p [] [ text ("Kategorie: " ++ model.kategorie) ]
-                , button [ onClick Starten ] [ text "Los geht's" ]
-                ]
+                (if model.begriffe == [] then
+                    [ h1 [] [ text "SpyGame" ]
+                    , p [] [ text "Keine Begriffe mehr vorhanden" ]
+                    ]
+
+                 else
+                    [ h1 [] [ text "SpyGame" ]
+                    , viewSpielerinfo model.anzahlSpieler
+                    , p [] [ text ("Kategorie: " ++ model.kategorie) ]
+                    , button [ onClick Starten ] [ text "Los geht's" ]
+                    ]
+                )
 
         OffeneKarte n ->
             case model.spion of
@@ -152,9 +159,19 @@ update msg model =
             )
 
         BegriffErmittelt n ->
-            ( { model
-                | aktuellerBegriff =
+            let
+                neuerBegriff =
                     model.begriffe |> List.drop (n - 1) |> List.head
+            in
+            ( { model
+                | aktuellerBegriff = neuerBegriff
+                , begriffe =
+                    case neuerBegriff of
+                        Nothing ->
+                            model.begriffe
+
+                        Just b ->
+                            List.filter (\x -> x /= b) model.begriffe
               }
             , Cmd.none
             )
@@ -172,7 +189,10 @@ update msg model =
                 ( { model | status = Countdown }, Cmd.none )
 
         Reset ->
-            ( { initialModel | anzahlSpieler = model.anzahlSpieler }
+            ( { initialModel
+                | anzahlSpieler = model.anzahlSpieler
+                , begriffe = model.begriffe
+              }
             , Cmd.none
             )
 
