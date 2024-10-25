@@ -60,7 +60,8 @@ init _ =
 anzahlSpione : Int -> Int
 anzahlSpione spieler =
     --round (toFloat spieler / 3)
-    spieler // 3
+    --spieler // 3
+    1
 
 
 viewEintrag e =

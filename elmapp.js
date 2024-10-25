@@ -11089,7 +11089,7 @@ var $author$project$Main$NeueSpielerzahl = function (a) {
 	return {$: 'NeueSpielerzahl', a: a};
 };
 var $author$project$Main$anzahlSpione = function (spieler) {
-	return (spieler / 3) | 0;
+	return 1;
 };
 var $author$project$Main$viewSpielerinfo = function (anzahl) {
 	return A2(
