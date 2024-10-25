@@ -11556,13 +11556,6 @@ var $author$project$Main$view = function (model) {
 						$author$project$Main$viewSpioninfo(model.anzahlSpione),
 						$author$project$Main$viewZeit((model.zeit / 60) | 0),
 						A2(
-						$elm$html$Html$p,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Kategorie: ' + model.kategorie)
-							])),
-						A2(
 						$author$project$Main$viewKategorien,
 						model.kategorie,
 						$elm$core$Dict$keys($author$project$Main$kategorien)),
@@ -11590,7 +11583,7 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'Spieler Nummer ' + $elm$core$String$fromInt(n))
+								'Spieler ' + $elm$core$String$fromInt(n))
 							])),
 						A2($elm$core$List$member, n, model.spione) ? A2(
 						$elm$html$Html$p,
@@ -11644,7 +11637,7 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'Spieler Nummer ' + $elm$core$String$fromInt(n))
+								'Spieler ' + $elm$core$String$fromInt(n))
 							])),
 						A2(
 						$elm$html$Html$p,

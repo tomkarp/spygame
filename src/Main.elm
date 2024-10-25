@@ -151,7 +151,6 @@ view model =
                     , viewSpielerinfo model.anzahlSpieler
                     , viewSpioninfo model.anzahlSpione
                     , viewZeit (model.zeit // 60)
-                    , p [] [ text ("Kategorie: " ++ model.kategorie) ]
                     , viewKategorien model.kategorie (kategorien |> Dict.keys)
                     , button [ onClick Starten ] [ text "Los geht's" ]
                     ]
@@ -159,7 +158,7 @@ view model =
 
         OffeneKarte n ->
             div []
-                [ h2 [] [ text ("Spieler Nummer " ++ String.fromInt n) ]
+                [ h2 [] [ text ("Spieler " ++ String.fromInt n) ]
                 , if List.member n model.spione then
                     p [ class "begriff" ] [ text "Spion" ]
 
@@ -175,7 +174,7 @@ view model =
 
         VerdeckteKarte n ->
             div []
-                [ h2 [] [ text ("Spieler Nummer " ++ String.fromInt n) ]
+                [ h2 [] [ text ("Spieler " ++ String.fromInt n) ]
                 , p [ class "umdrehhinweis" ] [ text "???" ]
                 , button [ onClick (ZeigeKarte n) ] [ text "Zeige Karte" ]
                 ]
