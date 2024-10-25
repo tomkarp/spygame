@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Browser exposing (..)
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -26,6 +27,7 @@ type Msg
     = NeueSpielerzahl Int
     | NeueSpionzahl Int
     | NeueZeit Int
+    | NeueKategorie String
     | Starten
     | ZeigeKarte Int
     | VerdeckeKarte Int
@@ -42,12 +44,27 @@ type Status
     | Countdown
 
 
+kategorien : Dict String (List String)
+kategorien =
+    Dict.fromList
+        [ ( "Standort"
+          , [ "Flughafen", "Schule", "Büro", "Kino", "Café", "Restaurant", "Bibliothek", "Park", "Krankenhaus", "Supermarkt", "Einkaufszentrum", "Fitnessstudio", "Schwimmbad", "Theater", "Museum", "Zoo", "Bahnhof", "Tankstelle", "Post", "Friseur", "Apotheke", "Spielplatz", "Stadion", "Kirche", "Tempel", "Moschee", "Kunstgalerie", "Marktplatz", "Strand", "Berg", "See", "Campingplatz", "Bücherei", "Klinik", "Tierheim", "Schloss", "Festplatz", "Botanischer Garten", "Aquarium", "Planetarium", "Hochschule", "Universität", "Messegelände", "Gärtnerei", "Weingut", "Brauerei", "Kochschule", "Fahrradverleih", "Autovermietung", "Reisebüro", "Kunstschule", "Musikschule", "Tanzschule", "Tierschutzverein", "Seniorenheim", "Jugendzentrum", "Schneiderei", "Schreinerei", "Bäckerei", "Metzgerei", "Pferdestall", "Golfplatz", "Tennisplatz", "Skihütte", "Ferienhaus", "Hütte", "Wellness-Oase", "Sauna", "Wildpark", "Abenteuerspielplatz", "Hochseilgarten", "Escape Room", "Kletterhalle", "Laser-Tag-Arena", "Bowlingbahn", "Billardcafé", "Karaokebar", "Disco", "Weihnachtsmarkt", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt" ]
+          )
+        , ( "Beruf"
+          , [ "Lehrer", "Arzt", "Krankenschwester", "Polizist", "Feuerwehrmann", "Koch", "Kellner", "Bäcker", "Metzger", "Frisör", "Maler", "Schreiner", "Elektriker", "Maurer", "Gärtner", "Winzer", "Brauer", "Künstler", "Musiker", "Tänzer", "Schauspieler", "Tierpfleger", "Tierarzt", "Altenpfleger", "Jugendbetreuer", "Schneider", "Buchhalter", "Informatiker", "Biologe", "Kinderarzt", "Burger-Verkäufer", "Entsorgungsspezialist", "Autoverkäufer", "Reiseleiter", "Tanzlehrer", "Steuerberater" ]
+          )
+        , ( "Hobby"
+          , [ "Fußball", "Tennis", "Golf", "Schwimmen", "Laufen", "Radfahren", "Klettern", "Wandern", "Skifahren", "Snowboarden", "Surfen", "Segeln", "Tauchen", "Reiten", "Tanzen", "Musizieren", "Malen", "Zeichnen", "Basteln", "Stricken", "Nähen", "Kochen", "Backen", "Gärtnern", "Fotografieren", "Filmen", "Lesen", "Schreiben", "Theater", "Kino", "Musical", "Konzert", "Oper", "Museum", "Ausstellung", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt", "Weihnachtsmarkt", "Karneval", "Lesen", "Schreiben", "Theater", "Kino", "Musical", "Konzert" ]
+          )
+        ]
+
+
 initialModel : Model
 initialModel =
     { anzahlSpieler = 5
     , anzahlSpione = maxAnzahlSpione 5
-    , kategorie = "Standort"
-    , begriffe = [ "Flughafen", "Schule", "Büro", "Kino", "Café", "Restaurant", "Bibliothek", "Park", "Krankenhaus", "Supermarkt", "Einkaufszentrum", "Fitnessstudio", "Schwimmbad", "Theater", "Museum", "Zoo", "Bahnhof", "Tankstelle", "Post", "Friseur", "Apotheke", "Spielplatz", "Stadion", "Kirche", "Tempel", "Moschee", "Kunstgalerie", "Marktplatz", "Strand", "Berg", "See", "Campingplatz", "Bücherei", "Klinik", "Tierheim", "Schloss", "Festplatz", "Botanischer Garten", "Aquarium", "Planetarium", "Hochschule", "Universität", "Messegelände", "Gärtnerei", "Weingut", "Brauerei", "Kochschule", "Fahrradverleih", "Autovermietung", "Reisebüro", "Kunstschule", "Musikschule", "Tanzschule", "Tierschutzverein", "Seniorenheim", "Jugendzentrum", "Schneiderei", "Schreinerei", "Bäckerei", "Metzgerei", "Pferdestall", "Golfplatz", "Tennisplatz", "Skihütte", "Ferienhaus", "Hütte", "Wellness-Oase", "Sauna", "Wildpark", "Abenteuerspielplatz", "Hochseilgarten", "Escape Room", "Kletterhalle", "Laser-Tag-Arena", "Bowlingbahn", "Billardcafé", "Karaokebar", "Disco", "Weihnachtsmarkt", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt" ]
+    , kategorie = kategorien |> Dict.keys |> List.head |> Maybe.withDefault "Keine Kategorie"
+    , begriffe = kategorien |> Dict.get (kategorien |> Dict.keys |> List.head |> Maybe.withDefault "Keine Kategorie") |> Maybe.withDefault []
     , status = Vorbereitung
     , aktuellerBegriff = Nothing
     , buerger = List.range 1 5
@@ -106,6 +123,19 @@ viewZeit minuten =
         ]
 
 
+stringToOption : String -> String -> Html Msg
+stringToOption kat s =
+    option [ value s, selected (kat == s) ] [ text s ]
+
+
+viewKategorien : String -> List String -> Html Msg
+viewKategorien aktuelleKategorie kategorienliste =
+    div []
+        [ select [ onInput NeueKategorie ]
+            (List.map (stringToOption aktuelleKategorie) kategorienliste)
+        ]
+
+
 view : Model -> Html Msg
 view model =
     case model.status of
@@ -122,6 +152,7 @@ view model =
                     , viewSpioninfo model.anzahlSpione
                     , viewZeit (model.zeit // 60)
                     , p [] [ text ("Kategorie: " ++ model.kategorie) ]
+                    , viewKategorien model.kategorie (kategorien |> Dict.keys)
                     , button [ onClick Starten ] [ text "Los geht's" ]
                     ]
                 )
@@ -206,6 +237,14 @@ update msg model =
                         n
             in
             ( { model | zeit = neueZeit }, Cmd.none )
+
+        NeueKategorie k ->
+            ( { model
+                | kategorie = k
+                , begriffe = kategorien |> Dict.get k |> Maybe.withDefault []
+              }
+            , Cmd.none
+            )
 
         Starten ->
             ( { model

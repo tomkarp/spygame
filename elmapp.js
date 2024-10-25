@@ -10601,6 +10601,31 @@ var $elm$core$Basics$never = function (_v0) {
 };
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$Vorbereitung = {$: 'Vorbereitung'};
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Main$kategorien = $elm$core$Dict$fromList(
+	_List_fromArray(
+		[
+			_Utils_Tuple2(
+			'Standort',
+			_List_fromArray(
+				['Flughafen', 'Schule', 'Büro', 'Kino', 'Café', 'Restaurant', 'Bibliothek', 'Park', 'Krankenhaus', 'Supermarkt', 'Einkaufszentrum', 'Fitnessstudio', 'Schwimmbad', 'Theater', 'Museum', 'Zoo', 'Bahnhof', 'Tankstelle', 'Post', 'Friseur', 'Apotheke', 'Spielplatz', 'Stadion', 'Kirche', 'Tempel', 'Moschee', 'Kunstgalerie', 'Marktplatz', 'Strand', 'Berg', 'See', 'Campingplatz', 'Bücherei', 'Klinik', 'Tierheim', 'Schloss', 'Festplatz', 'Botanischer Garten', 'Aquarium', 'Planetarium', 'Hochschule', 'Universität', 'Messegelände', 'Gärtnerei', 'Weingut', 'Brauerei', 'Kochschule', 'Fahrradverleih', 'Autovermietung', 'Reisebüro', 'Kunstschule', 'Musikschule', 'Tanzschule', 'Tierschutzverein', 'Seniorenheim', 'Jugendzentrum', 'Schneiderei', 'Schreinerei', 'Bäckerei', 'Metzgerei', 'Pferdestall', 'Golfplatz', 'Tennisplatz', 'Skihütte', 'Ferienhaus', 'Hütte', 'Wellness-Oase', 'Sauna', 'Wildpark', 'Abenteuerspielplatz', 'Hochseilgarten', 'Escape Room', 'Kletterhalle', 'Laser-Tag-Arena', 'Bowlingbahn', 'Billardcafé', 'Karaokebar', 'Disco', 'Weihnachtsmarkt', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt'])),
+			_Utils_Tuple2(
+			'Beruf',
+			_List_fromArray(
+				['Lehrer', 'Arzt', 'Krankenschwester', 'Polizist', 'Feuerwehrmann', 'Koch', 'Kellner', 'Bäcker', 'Metzger', 'Frisör', 'Maler', 'Schreiner', 'Elektriker', 'Maurer', 'Gärtner', 'Winzer', 'Brauer', 'Künstler', 'Musiker', 'Tänzer', 'Schauspieler', 'Tierpfleger', 'Tierarzt', 'Altenpfleger', 'Jugendbetreuer', 'Schneider', 'Buchhalter', 'Informatiker', 'Biologe', 'Kinderarzt', 'Burger-Verkäufer', 'Entsorgungsspezialist', 'Autoverkäufer', 'Reiseleiter', 'Tanzlehrer', 'Steuerberater'])),
+			_Utils_Tuple2(
+			'Hobby',
+			_List_fromArray(
+				['Fußball', 'Tennis', 'Golf', 'Schwimmen', 'Laufen', 'Radfahren', 'Klettern', 'Wandern', 'Skifahren', 'Snowboarden', 'Surfen', 'Segeln', 'Tauchen', 'Reiten', 'Tanzen', 'Musizieren', 'Malen', 'Zeichnen', 'Basteln', 'Stricken', 'Nähen', 'Kochen', 'Backen', 'Gärtnern', 'Fotografieren', 'Filmen', 'Lesen', 'Schreiben', 'Theater', 'Kino', 'Musical', 'Konzert', 'Oper', 'Museum', 'Ausstellung', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt', 'Weihnachtsmarkt', 'Karneval', 'Lesen', 'Schreiben', 'Theater', 'Kino', 'Musical', 'Konzert']))
+		]));
 var $elm$core$Basics$round = _Basics_round;
 var $author$project$Main$maxAnzahlSpione = function (spieler) {
 	return $elm$core$Basics$round(spieler / 3);
@@ -10609,10 +10634,23 @@ var $author$project$Main$initialModel = {
 	aktuellerBegriff: $elm$core$Maybe$Nothing,
 	anzahlSpieler: 5,
 	anzahlSpione: $author$project$Main$maxAnzahlSpione(5),
-	begriffe: _List_fromArray(
-		['Flughafen', 'Schule', 'Büro', 'Kino', 'Café', 'Restaurant', 'Bibliothek', 'Park', 'Krankenhaus', 'Supermarkt', 'Einkaufszentrum', 'Fitnessstudio', 'Schwimmbad', 'Theater', 'Museum', 'Zoo', 'Bahnhof', 'Tankstelle', 'Post', 'Friseur', 'Apotheke', 'Spielplatz', 'Stadion', 'Kirche', 'Tempel', 'Moschee', 'Kunstgalerie', 'Marktplatz', 'Strand', 'Berg', 'See', 'Campingplatz', 'Bücherei', 'Klinik', 'Tierheim', 'Schloss', 'Festplatz', 'Botanischer Garten', 'Aquarium', 'Planetarium', 'Hochschule', 'Universität', 'Messegelände', 'Gärtnerei', 'Weingut', 'Brauerei', 'Kochschule', 'Fahrradverleih', 'Autovermietung', 'Reisebüro', 'Kunstschule', 'Musikschule', 'Tanzschule', 'Tierschutzverein', 'Seniorenheim', 'Jugendzentrum', 'Schneiderei', 'Schreinerei', 'Bäckerei', 'Metzgerei', 'Pferdestall', 'Golfplatz', 'Tennisplatz', 'Skihütte', 'Ferienhaus', 'Hütte', 'Wellness-Oase', 'Sauna', 'Wildpark', 'Abenteuerspielplatz', 'Hochseilgarten', 'Escape Room', 'Kletterhalle', 'Laser-Tag-Arena', 'Bowlingbahn', 'Billardcafé', 'Karaokebar', 'Disco', 'Weihnachtsmarkt', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt']),
+	begriffe: A2(
+		$elm$core$Maybe$withDefault,
+		_List_Nil,
+		A2(
+			$elm$core$Dict$get,
+			A2(
+				$elm$core$Maybe$withDefault,
+				'Keine Kategorie',
+				$elm$core$List$head(
+					$elm$core$Dict$keys($author$project$Main$kategorien))),
+			$author$project$Main$kategorien)),
 	buerger: A2($elm$core$List$range, 1, 5),
-	kategorie: 'Standort',
+	kategorie: A2(
+		$elm$core$Maybe$withDefault,
+		'Keine Kategorie',
+		$elm$core$List$head(
+			$elm$core$Dict$keys($author$project$Main$kategorien))),
 	restzeit: 0,
 	spione: _List_Nil,
 	status: $author$project$Main$Vorbereitung,
@@ -10925,15 +10963,6 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
 	var state = _v0.a;
@@ -11163,6 +11192,19 @@ var $author$project$Main$update = F2(
 						model,
 						{zeit: neueZeit}),
 					$elm$core$Platform$Cmd$none);
+			case 'NeueKategorie':
+				var k = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							begriffe: A2(
+								$elm$core$Maybe$withDefault,
+								_List_Nil,
+								A2($elm$core$Dict$get, k, $author$project$Main$kategorien)),
+							kategorie: k
+						}),
+					$elm$core$Platform$Cmd$none);
 			case 'Starten':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -11295,6 +11337,54 @@ var $author$project$Main$ZeigeKarte = function (a) {
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $author$project$Main$NeueKategorie = function (a) {
+	return {$: 'NeueKategorie', a: a};
+};
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
+var $author$project$Main$stringToOption = F2(
+	function (kat, s) {
+		return A2(
+			$elm$html$Html$option,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$value(s),
+					$elm$html$Html$Attributes$selected(
+					_Utils_eq(kat, s))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(s)
+				]));
+	});
+var $author$project$Main$viewKategorien = F2(
+	function (aktuelleKategorie, kategorienliste) {
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$select,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onInput($author$project$Main$NeueKategorie)
+						]),
+					A2(
+						$elm$core$List$map,
+						$author$project$Main$stringToOption(aktuelleKategorie),
+						kategorienliste))
+				]));
+	});
 var $author$project$Main$NeueSpielerzahl = function (a) {
 	return {$: 'NeueSpielerzahl', a: a};
 };
@@ -11473,6 +11563,10 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('Kategorie: ' + model.kategorie)
 							])),
 						A2(
+						$author$project$Main$viewKategorien,
+						model.kategorie,
+						$elm$core$Dict$keys($author$project$Main$kategorien)),
+						A2(
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
@@ -11611,7 +11705,7 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueSpionzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueSpionzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"NeueKategorie":["String.String"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});
 
 //////////////////// HMR BEGIN ////////////////////
 
