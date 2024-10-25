@@ -10607,21 +10607,207 @@ var $author$project$Main$initialModel = {
 	begriffe: _List_fromArray(
 		['Flughafen', 'Schule', 'Büro', 'Kino', 'Café', 'Restaurant', 'Bibliothek', 'Park', 'Krankenhaus', 'Supermarkt', 'Einkaufszentrum', 'Fitnessstudio', 'Schwimmbad', 'Theater', 'Museum', 'Zoo', 'Bahnhof', 'Tankstelle', 'Post', 'Friseur', 'Apotheke', 'Spielplatz', 'Stadion', 'Kirche', 'Tempel', 'Moschee', 'Kunstgalerie', 'Marktplatz', 'Strand', 'Berg', 'See', 'Campingplatz', 'Bücherei', 'Klinik', 'Tierheim', 'Schloss', 'Festplatz', 'Botanischer Garten', 'Aquarium', 'Planetarium', 'Hochschule', 'Universität', 'Messegelände', 'Gärtnerei', 'Weingut', 'Brauerei', 'Kochschule', 'Fahrradverleih', 'Autovermietung', 'Reisebüro', 'Kunstschule', 'Musikschule', 'Tanzschule', 'Tierschutzverein', 'Seniorenheim', 'Jugendzentrum', 'Schneiderei', 'Schreinerei', 'Bäckerei', 'Metzgerei', 'Pferdestall', 'Golfplatz', 'Tennisplatz', 'Skihütte', 'Ferienhaus', 'Hütte', 'Wellness-Oase', 'Sauna', 'Wildpark', 'Abenteuerspielplatz', 'Hochseilgarten', 'Escape Room', 'Kletterhalle', 'Laser-Tag-Arena', 'Bowlingbahn', 'Billardcafé', 'Karaokebar', 'Disco', 'Weihnachtsmarkt', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt']),
 	kategorie: 'Standort',
+	restzeit: 180,
 	spion: $elm$core$Maybe$Nothing,
 	status: $author$project$Main$Vorbereitung
 };
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Main$initialModel, $elm$core$Platform$Cmd$none);
 };
+var $author$project$Main$Countdown = {$: 'Countdown'};
+var $author$project$Main$Tick = function (a) {
+	return {$: 'Tick', a: a};
+};
+var $elm$time$Time$Every = F2(
+	function (a, b) {
+		return {$: 'Every', a: a, b: b};
+	});
+var $elm$time$Time$State = F2(
+	function (taggers, processes) {
+		return {processes: processes, taggers: taggers};
+	});
+var $elm$time$Time$init = $elm$core$Task$succeed(
+	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
+var $elm$time$Time$addMySub = F2(
+	function (_v0, state) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		var _v1 = A2($elm$core$Dict$get, interval, state);
+		if (_v1.$ === 'Nothing') {
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				_List_fromArray(
+					[tagger]),
+				state);
+		} else {
+			var taggers = _v1.a;
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				A2($elm$core$List$cons, tagger, taggers),
+				state);
+		}
+	});
+var $elm$core$Process$kill = _Scheduler_kill;
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$setInterval = _Time_setInterval;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$time$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		if (!intervals.b) {
+			return $elm$core$Task$succeed(processes);
+		} else {
+			var interval = intervals.a;
+			var rest = intervals.b;
+			var spawnTimer = $elm$core$Process$spawn(
+				A2(
+					$elm$time$Time$setInterval,
+					interval,
+					A2($elm$core$Platform$sendToSelf, router, interval)));
+			var spawnRest = function (id) {
+				return A3(
+					$elm$time$Time$spawnHelp,
+					router,
+					rest,
+					A3($elm$core$Dict$insert, interval, id, processes));
+			};
+			return A2($elm$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var $elm$time$Time$onEffects = F3(
+	function (router, subs, _v0) {
+		var processes = _v0.processes;
+		var rightStep = F3(
+			function (_v6, id, _v7) {
+				var spawns = _v7.a;
+				var existing = _v7.b;
+				var kills = _v7.c;
+				return _Utils_Tuple3(
+					spawns,
+					existing,
+					A2(
+						$elm$core$Task$andThen,
+						function (_v5) {
+							return kills;
+						},
+						$elm$core$Process$kill(id)));
+			});
+		var newTaggers = A3($elm$core$List$foldl, $elm$time$Time$addMySub, $elm$core$Dict$empty, subs);
+		var leftStep = F3(
+			function (interval, taggers, _v4) {
+				var spawns = _v4.a;
+				var existing = _v4.b;
+				var kills = _v4.c;
+				return _Utils_Tuple3(
+					A2($elm$core$List$cons, interval, spawns),
+					existing,
+					kills);
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _v3) {
+				var spawns = _v3.a;
+				var existing = _v3.b;
+				var kills = _v3.c;
+				return _Utils_Tuple3(
+					spawns,
+					A3($elm$core$Dict$insert, interval, id, existing),
+					kills);
+			});
+		var _v1 = A6(
+			$elm$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			processes,
+			_Utils_Tuple3(
+				_List_Nil,
+				$elm$core$Dict$empty,
+				$elm$core$Task$succeed(_Utils_Tuple0)));
+		var spawnList = _v1.a;
+		var existingDict = _v1.b;
+		var killTask = _v1.c;
+		return A2(
+			$elm$core$Task$andThen,
+			function (newProcesses) {
+				return $elm$core$Task$succeed(
+					A2($elm$time$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$time$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _v0 = A2($elm$core$Dict$get, interval, state.taggers);
+		if (_v0.$ === 'Nothing') {
+			return $elm$core$Task$succeed(state);
+		} else {
+			var taggers = _v0.a;
+			var tellTaggers = function (time) {
+				return $elm$core$Task$sequence(
+					A2(
+						$elm$core$List$map,
+						function (tagger) {
+							return A2(
+								$elm$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						taggers));
+			};
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$succeed(state);
+				},
+				A2($elm$core$Task$andThen, tellTaggers, $elm$time$Time$now));
+		}
+	});
+var $elm$time$Time$subMap = F2(
+	function (f, _v0) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		return A2(
+			$elm$time$Time$Every,
+			interval,
+			A2($elm$core$Basics$composeL, f, tagger));
+	});
+_Platform_effectManagers['Time'] = _Platform_createManager($elm$time$Time$init, $elm$time$Time$onEffects, $elm$time$Time$onSelfMsg, 0, $elm$time$Time$subMap);
+var $elm$time$Time$subscription = _Platform_leaf('Time');
+var $elm$time$Time$every = F2(
+	function (interval, tagger) {
+		return $elm$time$Time$subscription(
+			A2($elm$time$Time$Every, interval, tagger));
+	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
-var $author$project$Main$subscriptions = function (_v0) {
-	return $elm$core$Platform$Sub$none;
+var $author$project$Main$subscriptions = function (model) {
+	return _Utils_eq(model.status, $author$project$Main$Countdown) ? A2($elm$time$Time$every, 1000, $author$project$Main$Tick) : $elm$core$Platform$Sub$none;
 };
 var $author$project$Main$BegriffErmittelt = function (a) {
 	return {$: 'BegriffErmittelt', a: a};
 };
-var $author$project$Main$Countdown = {$: 'Countdown'};
 var $author$project$Main$OffeneKarte = function (a) {
 	return {$: 'OffeneKarte', a: a};
 };
@@ -10663,22 +10849,6 @@ var $elm$random$Random$initialSeed = function (x) {
 	return $elm$random$Random$next(
 		A2($elm$random$Random$Seed, state2, incr));
 };
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
-};
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
 var $elm$time$Time$posixToMillis = function (_v0) {
 	var millis = _v0.a;
 	return millis;
@@ -10806,6 +10976,14 @@ var $author$project$Main$update = F2(
 						model,
 						{anzahlSpieler: neueZahl}),
 					$elm$core$Platform$Cmd$none);
+			case 'NeueZeit':
+				var n = msg.a;
+				var neueZeit = (n < 60) ? 60 : n;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{restzeit: neueZeit}),
+					$elm$core$Platform$Cmd$none);
 			case 'Starten':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -10874,6 +11052,16 @@ var $author$project$Main$update = F2(
 						{
 							status: $author$project$Main$VerdeckteKarte(n)
 						}),
+					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{status: $author$project$Main$Countdown}),
+					$elm$core$Platform$Cmd$none);
+			case 'Tick':
+				return (model.restzeit > 0) ? _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{restzeit: model.restzeit - 1}),
 					$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -10954,6 +11142,51 @@ var $author$project$Main$viewSpielerinfo = function (anzahl) {
 					]))
 			]));
 };
+var $author$project$Main$NeueZeit = function (a) {
+	return {$: 'NeueZeit', a: a};
+};
+var $author$project$Main$viewZeit = function (minuten) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Zeit (min): '),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NeueZeit((minuten * 60) - 60))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('-')
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'margin', '10px')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$elm$core$String$fromInt(minuten))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NeueZeit((minuten * 60) + 60))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('+')
+					]))
+			]));
+};
 var $author$project$Main$view = function (model) {
 	var _v0 = model.status;
 	switch (_v0.$) {
@@ -10987,6 +11220,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('SpyGame')
 							])),
 						$author$project$Main$viewSpielerinfo(model.anzahlSpieler),
+						$author$project$Main$viewZeit((model.restzeit / 60) | 0),
 						A2(
 						$elm$html$Html$p,
 						_List_Nil,
@@ -11119,7 +11353,15 @@ var $author$project$Main$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Ihr habt drei Minuten Zeit. Los geht\'s ...')
+								$elm$html$Html$text('Zeit läuft ...')
+							])),
+						A2(
+						$elm$html$Html$p,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								$elm$core$String$fromInt(model.restzeit))
 							])),
 						A2(
 						$elm$html$Html$button,
@@ -11137,7 +11379,7 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});
 
 //////////////////// HMR BEGIN ////////////////////
 

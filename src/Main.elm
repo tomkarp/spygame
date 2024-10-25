@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
+import Time
 
 
 type alias Model =
@@ -14,16 +15,19 @@ type alias Model =
     , begriffe : List String
     , aktuellerBegriff : Maybe String
     , spion : Maybe Int
+    , restzeit : Int
     }
 
 
 type Msg
     = NeueSpielerzahl Int
+    | NeueZeit Int
     | Starten
     | ZeigeKarte Int
     | VerdeckeKarte Int
     | SpionErmittelt Int
     | BegriffErmittelt Int
+    | Tick Time.Posix
     | Reset
 
 
@@ -42,6 +46,7 @@ initialModel =
     , status = Vorbereitung
     , aktuellerBegriff = Nothing
     , spion = Nothing
+    , restzeit = 180
     }
 
 
@@ -78,6 +83,15 @@ viewSpielerinfo anzahl =
         ]
 
 
+viewZeit minuten =
+    div []
+        [ text "Zeit (min): "
+        , button [ onClick (NeueZeit (minuten * 60 - 60)) ] [ text "-" ]
+        , span [ style "margin" "10px" ] [ text (String.fromInt minuten) ]
+        , button [ onClick (NeueZeit (minuten * 60 + 60)) ] [ text "+" ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
     case model.status of
@@ -91,6 +105,7 @@ view model =
                  else
                     [ h1 [] [ text "SpyGame" ]
                     , viewSpielerinfo model.anzahlSpieler
+                    , viewZeit (model.restzeit // 60)
                     , p [] [ text ("Kategorie: " ++ model.kategorie) ]
                     , button [ onClick Starten ] [ text "Los geht's" ]
                     ]
@@ -126,7 +141,8 @@ view model =
 
         Countdown ->
             div []
-                [ p [] [ text "Ihr habt drei Minuten Zeit. Los geht's ..." ]
+                [ p [] [ text "Zeit läuft ..." ]
+                , p [] [ text (String.fromInt model.restzeit) ]
                 , button [ onClick Reset ] [ text "Neue Runde" ]
                 ]
 
@@ -144,6 +160,17 @@ update msg model =
                         n
             in
             ( { model | anzahlSpieler = neueZahl }, Cmd.none )
+
+        NeueZeit n ->
+            let
+                neueZeit =
+                    if n < 60 then
+                        60
+
+                    else
+                        n
+            in
+            ( { model | restzeit = neueZeit }, Cmd.none )
 
         Starten ->
             ( { model
@@ -188,6 +215,13 @@ update msg model =
             else
                 ( { model | status = Countdown }, Cmd.none )
 
+        Tick _ ->
+            if model.restzeit > 0 then
+                ( { model | restzeit = model.restzeit - 1 }, Cmd.none )
+
+            else
+                ( { model | status = Countdown }, Cmd.none )
+
         Reset ->
             ( { initialModel
                 | anzahlSpieler = model.anzahlSpieler
@@ -197,8 +231,12 @@ update msg model =
             )
 
 
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    if model.status == Countdown then
+        Time.every 1000 Tick
+
+    else
+        Sub.none
 
 
 main =
