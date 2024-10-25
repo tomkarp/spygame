@@ -11,6 +11,7 @@ import Time
 type alias Model =
     { status : Status
     , anzahlSpieler : Int
+    , anzahlSpione : Int
     , kategorie : String
     , begriffe : List String
     , aktuellerBegriff : Maybe String
@@ -23,6 +24,7 @@ type alias Model =
 
 type Msg
     = NeueSpielerzahl Int
+    | NeueSpionzahl Int
     | NeueZeit Int
     | Starten
     | ZeigeKarte Int
@@ -43,6 +45,7 @@ type Status
 initialModel : Model
 initialModel =
     { anzahlSpieler = 5
+    , anzahlSpione = maxAnzahlSpione 5
     , kategorie = "Standort"
     , begriffe = [ "Flughafen", "Schule", "Büro", "Kino", "Café", "Restaurant", "Bibliothek", "Park", "Krankenhaus", "Supermarkt", "Einkaufszentrum", "Fitnessstudio", "Schwimmbad", "Theater", "Museum", "Zoo", "Bahnhof", "Tankstelle", "Post", "Friseur", "Apotheke", "Spielplatz", "Stadion", "Kirche", "Tempel", "Moschee", "Kunstgalerie", "Marktplatz", "Strand", "Berg", "See", "Campingplatz", "Bücherei", "Klinik", "Tierheim", "Schloss", "Festplatz", "Botanischer Garten", "Aquarium", "Planetarium", "Hochschule", "Universität", "Messegelände", "Gärtnerei", "Weingut", "Brauerei", "Kochschule", "Fahrradverleih", "Autovermietung", "Reisebüro", "Kunstschule", "Musikschule", "Tanzschule", "Tierschutzverein", "Seniorenheim", "Jugendzentrum", "Schneiderei", "Schreinerei", "Bäckerei", "Metzgerei", "Pferdestall", "Golfplatz", "Tennisplatz", "Skihütte", "Ferienhaus", "Hütte", "Wellness-Oase", "Sauna", "Wildpark", "Abenteuerspielplatz", "Hochseilgarten", "Escape Room", "Kletterhalle", "Laser-Tag-Arena", "Bowlingbahn", "Billardcafé", "Karaokebar", "Disco", "Weihnachtsmarkt", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt" ]
     , status = Vorbereitung
@@ -61,10 +64,9 @@ init _ =
     )
 
 
-anzahlSpione : Int -> Int
-anzahlSpione spieler =
-    --round (toFloat spieler / 3)
-    spieler // 3
+maxAnzahlSpione : Int -> Int
+maxAnzahlSpione spieler =
+    round (toFloat spieler / 3)
 
 
 viewEintrag e =
@@ -78,21 +80,29 @@ viewEintraege liste =
 
 
 viewSpielerinfo anzahl =
-    div []
-        [ text "Anzahl der Spieler: "
-        , button [ onClick (NeueSpielerzahl (anzahl - 1)) ] [ text "-" ]
-        , span [ style "margin" "10px" ] [ text (String.fromInt anzahl) ]
+    div [ class "zahlMitButtons" ]
+        [ button [ onClick (NeueSpielerzahl (anzahl - 1)) ] [ text "-" ]
+        , span [] [ text (String.fromInt anzahl) ]
         , button [ onClick (NeueSpielerzahl (anzahl + 1)) ] [ text "+" ]
-        , p [] [ text ("Anzahl Spione: " ++ String.fromInt (anzahlSpione anzahl)) ]
+        , text " Spieler"
+        ]
+
+
+viewSpioninfo anzahl =
+    div [ class "zahlMitButtons" ]
+        [ button [ onClick (NeueSpionzahl (anzahl - 1)) ] [ text "-" ]
+        , span [] [ text (String.fromInt anzahl) ]
+        , button [ onClick (NeueSpionzahl (anzahl + 1)) ] [ text "+" ]
+        , text " Spione"
         ]
 
 
 viewZeit minuten =
-    div []
-        [ text "Zeit (min): "
-        , button [ onClick (NeueZeit (minuten * 60 - 60)) ] [ text "-" ]
-        , span [ style "margin" "10px" ] [ text (String.fromInt minuten) ]
+    div [ class "zahlMitButtons" ]
+        [ button [ onClick (NeueZeit (minuten * 60 - 60)) ] [ text "-" ]
+        , span [] [ text (String.fromInt minuten) ]
         , button [ onClick (NeueZeit (minuten * 60 + 60)) ] [ text "+" ]
+        , text " Minuten"
         ]
 
 
@@ -109,6 +119,7 @@ view model =
                  else
                     [ h1 [] [ text "SpyGame" ]
                     , viewSpielerinfo model.anzahlSpieler
+                    , viewSpioninfo model.anzahlSpione
                     , viewZeit (model.zeit // 60)
                     , p [] [ text ("Kategorie: " ++ model.kategorie) ]
                     , button [ onClick Starten ] [ text "Los geht's" ]
@@ -140,8 +151,8 @@ view model =
 
         Countdown ->
             div []
-                [ p [] [ text "Zeit läuft ..." ]
-                , p [] [ text (String.fromInt model.restzeit) ]
+                [ h2 [] [ text "Zeit läuft ..." ]
+                , h2 [] [ text (String.fromInt model.restzeit) ]
                 , button [ onClick Reset ] [ text "Neue Runde" ]
                 ]
 
@@ -161,9 +172,29 @@ update msg model =
             ( { model
                 | anzahlSpieler = neueZahl
                 , buerger = List.range 1 neueZahl
+                , anzahlSpione =
+                    if model.anzahlSpione > maxAnzahlSpione neueZahl then
+                        maxAnzahlSpione neueZahl
+
+                    else
+                        model.anzahlSpione
               }
             , Cmd.none
             )
+
+        NeueSpionzahl n ->
+            let
+                neueZahl =
+                    if n < 1 then
+                        1
+
+                    else if n > maxAnzahlSpione model.anzahlSpieler then
+                        maxAnzahlSpione model.anzahlSpieler
+
+                    else
+                        n
+            in
+            ( { model | anzahlSpione = neueZahl }, Cmd.none )
 
         NeueZeit n ->
             let
@@ -197,7 +228,7 @@ update msg model =
                 | spione = neueSpione
                 , buerger = neueBuerger
               }
-            , if List.length neueSpione < anzahlSpione model.anzahlSpieler then
+            , if List.length neueSpione < model.anzahlSpione then
                 Random.generate SpionErmittelt (Random.int 1 (neueBuerger |> List.length))
 
               else
@@ -248,6 +279,7 @@ update msg model =
               , status = Vorbereitung
               , aktuellerBegriff = Nothing
               , buerger = List.range 1 model.anzahlSpieler
+              , anzahlSpione = model.anzahlSpione
               , spione = []
               , zeit = model.zeit
               , restzeit = 0

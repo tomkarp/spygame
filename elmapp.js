@@ -10601,9 +10601,14 @@ var $elm$core$Basics$never = function (_v0) {
 };
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$Vorbereitung = {$: 'Vorbereitung'};
+var $elm$core$Basics$round = _Basics_round;
+var $author$project$Main$maxAnzahlSpione = function (spieler) {
+	return $elm$core$Basics$round(spieler / 3);
+};
 var $author$project$Main$initialModel = {
 	aktuellerBegriff: $elm$core$Maybe$Nothing,
 	anzahlSpieler: 5,
+	anzahlSpione: $author$project$Main$maxAnzahlSpione(5),
 	begriffe: _List_fromArray(
 		['Flughafen', 'Schule', 'Büro', 'Kino', 'Café', 'Restaurant', 'Bibliothek', 'Park', 'Krankenhaus', 'Supermarkt', 'Einkaufszentrum', 'Fitnessstudio', 'Schwimmbad', 'Theater', 'Museum', 'Zoo', 'Bahnhof', 'Tankstelle', 'Post', 'Friseur', 'Apotheke', 'Spielplatz', 'Stadion', 'Kirche', 'Tempel', 'Moschee', 'Kunstgalerie', 'Marktplatz', 'Strand', 'Berg', 'See', 'Campingplatz', 'Bücherei', 'Klinik', 'Tierheim', 'Schloss', 'Festplatz', 'Botanischer Garten', 'Aquarium', 'Planetarium', 'Hochschule', 'Universität', 'Messegelände', 'Gärtnerei', 'Weingut', 'Brauerei', 'Kochschule', 'Fahrradverleih', 'Autovermietung', 'Reisebüro', 'Kunstschule', 'Musikschule', 'Tanzschule', 'Tierschutzverein', 'Seniorenheim', 'Jugendzentrum', 'Schneiderei', 'Schreinerei', 'Bäckerei', 'Metzgerei', 'Pferdestall', 'Golfplatz', 'Tennisplatz', 'Skihütte', 'Ferienhaus', 'Hütte', 'Wellness-Oase', 'Sauna', 'Wildpark', 'Abenteuerspielplatz', 'Hochseilgarten', 'Escape Room', 'Kletterhalle', 'Laser-Tag-Arena', 'Bowlingbahn', 'Billardcafé', 'Karaokebar', 'Disco', 'Weihnachtsmarkt', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt']),
 	buerger: A2($elm$core$List$range, 1, 5),
@@ -10818,9 +10823,6 @@ var $author$project$Main$SpionErmittelt = function (a) {
 };
 var $author$project$Main$VerdeckteKarte = function (a) {
 	return {$: 'VerdeckteKarte', a: a};
-};
-var $author$project$Main$anzahlSpione = function (spieler) {
-	return (spieler / 3) | 0;
 };
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -11137,8 +11139,21 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							anzahlSpieler: neueZahl,
+							anzahlSpione: (_Utils_cmp(
+								model.anzahlSpione,
+								$author$project$Main$maxAnzahlSpione(neueZahl)) > 0) ? $author$project$Main$maxAnzahlSpione(neueZahl) : model.anzahlSpione,
 							buerger: A2($elm$core$List$range, 1, neueZahl)
 						}),
+					$elm$core$Platform$Cmd$none);
+			case 'NeueSpionzahl':
+				var n = msg.a;
+				var neueZahl = (n < 1) ? 1 : ((_Utils_cmp(
+					n,
+					$author$project$Main$maxAnzahlSpione(model.anzahlSpieler)) > 0) ? $author$project$Main$maxAnzahlSpione(model.anzahlSpieler) : n);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{anzahlSpione: neueZahl}),
 					$elm$core$Platform$Cmd$none);
 			case 'NeueZeit':
 				var n = msg.a;
@@ -11184,7 +11199,7 @@ var $author$project$Main$update = F2(
 						{buerger: neueBuerger, spione: neueSpione}),
 					(_Utils_cmp(
 						$elm$core$List$length(neueSpione),
-						$author$project$Main$anzahlSpione(model.anzahlSpieler)) < 0) ? A2(
+						model.anzahlSpione) < 0) ? A2(
 						$elm$random$Random$generate,
 						$author$project$Main$SpionErmittelt,
 						A2(
@@ -11258,6 +11273,7 @@ var $author$project$Main$update = F2(
 					{
 						aktuellerBegriff: $elm$core$Maybe$Nothing,
 						anzahlSpieler: model.anzahlSpieler,
+						anzahlSpione: model.anzahlSpione,
 						begriffe: model.begriffe,
 						buerger: A2($elm$core$List$range, 1, model.anzahlSpieler),
 						kategorie: model.kategorie,
@@ -11285,10 +11301,12 @@ var $author$project$Main$NeueSpielerzahl = function (a) {
 var $author$project$Main$viewSpielerinfo = function (anzahl) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('Anzahl der Spieler: '),
+				$elm$html$Html$Attributes$class('zahlMitButtons')
+			]),
+		_List_fromArray(
+			[
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
@@ -11302,10 +11320,7 @@ var $author$project$Main$viewSpielerinfo = function (anzahl) {
 					])),
 				A2(
 				$elm$html$Html$span,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin', '10px')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
@@ -11322,15 +11337,52 @@ var $author$project$Main$viewSpielerinfo = function (anzahl) {
 					[
 						$elm$html$Html$text('+')
 					])),
+				$elm$html$Html$text(' Spieler')
+			]));
+};
+var $author$project$Main$NeueSpionzahl = function (a) {
+	return {$: 'NeueSpionzahl', a: a};
+};
+var $author$project$Main$viewSpioninfo = function (anzahl) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('zahlMitButtons')
+			]),
+		_List_fromArray(
+			[
 				A2(
-				$elm$html$Html$p,
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NeueSpionzahl(anzahl - 1))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('-')
+					])),
+				A2(
+				$elm$html$Html$span,
 				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						'Anzahl Spione: ' + $elm$core$String$fromInt(
-							$author$project$Main$anzahlSpione(anzahl)))
-					]))
+						$elm$core$String$fromInt(anzahl))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NeueSpionzahl(anzahl + 1))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('+')
+					])),
+				$elm$html$Html$text(' Spione')
 			]));
 };
 var $author$project$Main$NeueZeit = function (a) {
@@ -11339,10 +11391,12 @@ var $author$project$Main$NeueZeit = function (a) {
 var $author$project$Main$viewZeit = function (minuten) {
 	return A2(
 		$elm$html$Html$div,
-		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('Zeit (min): '),
+				$elm$html$Html$Attributes$class('zahlMitButtons')
+			]),
+		_List_fromArray(
+			[
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
@@ -11356,10 +11410,7 @@ var $author$project$Main$viewZeit = function (minuten) {
 					])),
 				A2(
 				$elm$html$Html$span,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin', '10px')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
@@ -11375,7 +11426,8 @@ var $author$project$Main$viewZeit = function (minuten) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('+')
-					]))
+					])),
+				$elm$html$Html$text(' Minuten')
 			]));
 };
 var $author$project$Main$view = function (model) {
@@ -11411,6 +11463,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('SpyGame')
 							])),
 						$author$project$Main$viewSpielerinfo(model.anzahlSpieler),
+						$author$project$Main$viewSpioninfo(model.anzahlSpione),
 						$author$project$Main$viewZeit((model.zeit / 60) | 0),
 						A2(
 						$elm$html$Html$p,
@@ -11528,14 +11581,14 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$p,
+						$elm$html$Html$h2,
 						_List_Nil,
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Zeit läuft ...')
 							])),
 						A2(
-						$elm$html$Html$p,
+						$elm$html$Html$h2,
 						_List_Nil,
 						_List_fromArray(
 							[
@@ -11558,7 +11611,7 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueSpionzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});
 
 //////////////////// HMR BEGIN ////////////////////
 
