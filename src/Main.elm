@@ -14,7 +14,9 @@ type alias Model =
     , kategorie : String
     , begriffe : List String
     , aktuellerBegriff : Maybe String
-    , spion : Maybe Int
+    , spione : List Int
+    , buerger : List Int
+    , zeit : Int
     , restzeit : Int
     }
 
@@ -45,8 +47,10 @@ initialModel =
     , begriffe = [ "Flughafen", "Schule", "Büro", "Kino", "Café", "Restaurant", "Bibliothek", "Park", "Krankenhaus", "Supermarkt", "Einkaufszentrum", "Fitnessstudio", "Schwimmbad", "Theater", "Museum", "Zoo", "Bahnhof", "Tankstelle", "Post", "Friseur", "Apotheke", "Spielplatz", "Stadion", "Kirche", "Tempel", "Moschee", "Kunstgalerie", "Marktplatz", "Strand", "Berg", "See", "Campingplatz", "Bücherei", "Klinik", "Tierheim", "Schloss", "Festplatz", "Botanischer Garten", "Aquarium", "Planetarium", "Hochschule", "Universität", "Messegelände", "Gärtnerei", "Weingut", "Brauerei", "Kochschule", "Fahrradverleih", "Autovermietung", "Reisebüro", "Kunstschule", "Musikschule", "Tanzschule", "Tierschutzverein", "Seniorenheim", "Jugendzentrum", "Schneiderei", "Schreinerei", "Bäckerei", "Metzgerei", "Pferdestall", "Golfplatz", "Tennisplatz", "Skihütte", "Ferienhaus", "Hütte", "Wellness-Oase", "Sauna", "Wildpark", "Abenteuerspielplatz", "Hochseilgarten", "Escape Room", "Kletterhalle", "Laser-Tag-Arena", "Bowlingbahn", "Billardcafé", "Karaokebar", "Disco", "Weihnachtsmarkt", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt" ]
     , status = Vorbereitung
     , aktuellerBegriff = Nothing
-    , spion = Nothing
-    , restzeit = 180
+    , buerger = List.range 1 5
+    , spione = []
+    , zeit = 180
+    , restzeit = 0
     }
 
 
@@ -60,8 +64,7 @@ init _ =
 anzahlSpione : Int -> Int
 anzahlSpione spieler =
     --round (toFloat spieler / 3)
-    --spieler // 3
-    1
+    spieler // 3
 
 
 viewEintrag e =
@@ -106,32 +109,27 @@ view model =
                  else
                     [ h1 [] [ text "SpyGame" ]
                     , viewSpielerinfo model.anzahlSpieler
-                    , viewZeit (model.restzeit // 60)
+                    , viewZeit (model.zeit // 60)
                     , p [] [ text ("Kategorie: " ++ model.kategorie) ]
                     , button [ onClick Starten ] [ text "Los geht's" ]
                     ]
                 )
 
         OffeneKarte n ->
-            case model.spion of
-                Nothing ->
-                    p [] [ text "Fehler, bitte neu starten" ]
+            div []
+                [ h2 [] [ text ("Spieler Nummer " ++ String.fromInt n) ]
+                , if List.member n model.spione then
+                    p [ class "begriff" ] [ text "Spion" ]
 
-                Just spionnummer ->
-                    div []
-                        [ h2 [] [ text ("Spieler Nummer " ++ String.fromInt n) ]
-                        , if n == spionnummer then
-                            p [ class "begriff" ] [ text "Spion" ]
-
-                          else
-                            p [ class "begriff" ]
-                                [ model.aktuellerBegriff
-                                    |> Maybe.withDefault "Ungültiger Begriff"
-                                    |> text
-                                ]
-                        , button [ onClick (VerdeckeKarte (n + 1)) ] [ text "Weiter" ]
-                        , p [] [ text "Klicke auf 'Weiter' und gib dann das Gerät weiter" ]
+                  else
+                    p [ class "begriff" ]
+                        [ model.aktuellerBegriff
+                            |> Maybe.withDefault "Ungültiger Begriff"
+                            |> text
                         ]
+                , button [ onClick (VerdeckeKarte (n + 1)) ] [ text "Weiter" ]
+                , p [] [ text "Klicke auf 'Weiter' und gib dann das Gerät weiter" ]
+                ]
 
         VerdeckteKarte n ->
             div []
@@ -160,7 +158,12 @@ update msg model =
                     else
                         n
             in
-            ( { model | anzahlSpieler = neueZahl }, Cmd.none )
+            ( { model
+                | anzahlSpieler = neueZahl
+                , buerger = List.range 1 neueZahl
+              }
+            , Cmd.none
+            )
 
         NeueZeit n ->
             let
@@ -171,19 +174,34 @@ update msg model =
                     else
                         n
             in
-            ( { model | restzeit = neueZeit }, Cmd.none )
+            ( { model | zeit = neueZeit }, Cmd.none )
 
         Starten ->
             ( { model
                 | status = VerdeckteKarte 1
                 , aktuellerBegriff = model.begriffe |> List.head
+                , restzeit = model.zeit
               }
-            , Random.generate SpionErmittelt (Random.int 1 model.anzahlSpieler)
+            , Random.generate SpionErmittelt (Random.int 1 (List.length model.buerger))
             )
 
         SpionErmittelt n ->
-            ( { model | spion = Just n }
-            , Random.generate BegriffErmittelt (Random.int 1 (model.begriffe |> List.length))
+            let
+                neueSpione =
+                    model.spione ++ (List.drop (n - 1) model.buerger |> List.take 1)
+
+                neueBuerger =
+                    List.filter (\x -> not (List.member x neueSpione)) model.buerger
+            in
+            ( { model
+                | spione = neueSpione
+                , buerger = neueBuerger
+              }
+            , if List.length neueSpione < anzahlSpione model.anzahlSpieler then
+                Random.generate SpionErmittelt (Random.int 1 (neueBuerger |> List.length))
+
+              else
+                Random.generate BegriffErmittelt (Random.int 1 (model.begriffe |> List.length))
             )
 
         BegriffErmittelt n ->
@@ -224,9 +242,15 @@ update msg model =
                 ( { model | status = Countdown }, Cmd.none )
 
         Reset ->
-            ( { initialModel
-                | anzahlSpieler = model.anzahlSpieler
-                , begriffe = model.begriffe
+            ( { anzahlSpieler = model.anzahlSpieler
+              , begriffe = model.begriffe
+              , kategorie = model.kategorie
+              , status = Vorbereitung
+              , aktuellerBegriff = Nothing
+              , buerger = List.range 1 model.anzahlSpieler
+              , spione = []
+              , zeit = model.zeit
+              , restzeit = 0
               }
             , Cmd.none
             )
