@@ -91,7 +91,7 @@ view model =
                   else
                     p [ class "begriff" ]
                         [ model.aktuellerBegriff
-                            |> Maybe.withDefault "Ungültiger Begriff"
+                            |> Maybe.withDefault "Aktueller Begriff nicht verfügbar"
                             |> text
                         ]
                 , button [ onClick (VerdeckeKarte (n + 1)) ] [ text "Weiter" ]
