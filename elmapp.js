@@ -10601,58 +10601,13 @@ var $elm$core$Basics$never = function (_v0) {
 };
 var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Main$Vorbereitung = {$: 'Vorbereitung'};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $author$project$Main$kategorien = $elm$core$Dict$fromList(
-	_List_fromArray(
-		[
-			_Utils_Tuple2(
-			'Standort',
-			_List_fromArray(
-				['Flughafen', 'Schule', 'Büro', 'Kino', 'Café', 'Restaurant', 'Bibliothek', 'Park', 'Krankenhaus', 'Supermarkt', 'Einkaufszentrum', 'Fitnessstudio', 'Schwimmbad', 'Theater', 'Museum', 'Zoo', 'Bahnhof', 'Tankstelle', 'Post', 'Friseur', 'Apotheke', 'Spielplatz', 'Stadion', 'Kirche', 'Tempel', 'Moschee', 'Kunstgalerie', 'Marktplatz', 'Strand', 'Berg', 'See', 'Campingplatz', 'Bücherei', 'Klinik', 'Tierheim', 'Schloss', 'Festplatz', 'Botanischer Garten', 'Aquarium', 'Planetarium', 'Hochschule', 'Universität', 'Messegelände', 'Gärtnerei', 'Weingut', 'Brauerei', 'Kochschule', 'Fahrradverleih', 'Autovermietung', 'Reisebüro', 'Kunstschule', 'Musikschule', 'Tanzschule', 'Tierschutzverein', 'Seniorenheim', 'Jugendzentrum', 'Schneiderei', 'Schreinerei', 'Bäckerei', 'Metzgerei', 'Pferdestall', 'Golfplatz', 'Tennisplatz', 'Skihütte', 'Ferienhaus', 'Hütte', 'Wellness-Oase', 'Sauna', 'Wildpark', 'Abenteuerspielplatz', 'Hochseilgarten', 'Escape Room', 'Kletterhalle', 'Laser-Tag-Arena', 'Bowlingbahn', 'Billardcafé', 'Karaokebar', 'Disco', 'Weihnachtsmarkt', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt'])),
-			_Utils_Tuple2(
-			'Beruf',
-			_List_fromArray(
-				['Lehrer', 'Arzt', 'Krankenschwester', 'Polizist', 'Feuerwehrmann', 'Koch', 'Kellner', 'Bäcker', 'Metzger', 'Frisör', 'Maler', 'Schreiner', 'Elektriker', 'Maurer', 'Gärtner', 'Winzer', 'Brauer', 'Künstler', 'Musiker', 'Tänzer', 'Schauspieler', 'Tierpfleger', 'Tierarzt', 'Altenpfleger', 'Jugendbetreuer', 'Schneider', 'Buchhalter', 'Informatiker', 'Biologe', 'Kinderarzt', 'Burger-Verkäufer', 'Entsorgungsspezialist', 'Autoverkäufer', 'Reiseleiter', 'Tanzlehrer', 'Steuerberater'])),
-			_Utils_Tuple2(
-			'Hobby',
-			_List_fromArray(
-				['Fußball', 'Tennis', 'Golf', 'Schwimmen', 'Laufen', 'Radfahren', 'Klettern', 'Wandern', 'Skifahren', 'Snowboarden', 'Surfen', 'Segeln', 'Tauchen', 'Reiten', 'Tanzen', 'Musizieren', 'Malen', 'Zeichnen', 'Basteln', 'Stricken', 'Nähen', 'Kochen', 'Backen', 'Gärtnern', 'Fotografieren', 'Filmen', 'Lesen', 'Schreiben', 'Theater', 'Kino', 'Musical', 'Konzert', 'Oper', 'Museum', 'Ausstellung', 'Flohmarkt', 'Kunstmarkt', 'Handwerksmarkt', 'Weihnachtsmarkt', 'Karneval', 'Lesen', 'Schreiben', 'Theater', 'Kino', 'Musical', 'Konzert']))
-		]));
-var $elm$core$Basics$round = _Basics_round;
-var $author$project$Main$maxAnzahlSpione = function (spieler) {
-	return $elm$core$Basics$round(spieler / 3);
-};
 var $author$project$Main$initialModel = {
 	aktuellerBegriff: $elm$core$Maybe$Nothing,
 	anzahlSpieler: 5,
-	anzahlSpione: $author$project$Main$maxAnzahlSpione(5),
-	begriffe: A2(
-		$elm$core$Maybe$withDefault,
-		_List_Nil,
-		A2(
-			$elm$core$Dict$get,
-			A2(
-				$elm$core$Maybe$withDefault,
-				'Keine Kategorie',
-				$elm$core$List$head(
-					$elm$core$Dict$keys($author$project$Main$kategorien))),
-			$author$project$Main$kategorien)),
-	buerger: A2($elm$core$List$range, 1, 5),
-	kategorie: A2(
-		$elm$core$Maybe$withDefault,
-		'Keine Kategorie',
-		$elm$core$List$head(
-			$elm$core$Dict$keys($author$project$Main$kategorien))),
+	begriffe: _List_fromArray(
+		['Flughafen', 'Schule', 'Büro', 'Kino', 'Café']),
 	restzeit: 0,
-	spione: _List_Nil,
+	spion: 1,
 	status: $author$project$Main$Vorbereitung,
 	zeit: 180
 };
@@ -10850,11 +10805,8 @@ var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $author$project$Main$subscriptions = function (model) {
 	return _Utils_eq(model.status, $author$project$Main$Countdown) ? A2($elm$time$Time$every, 1000, $author$project$Main$Tick) : $elm$core$Platform$Sub$none;
 };
-var $author$project$Main$BegriffErmittelt = function (a) {
-	return {$: 'BegriffErmittelt', a: a};
-};
-var $author$project$Main$OffeneKarte = function (a) {
-	return {$: 'OffeneKarte', a: a};
+var $author$project$Main$AngezeigteKarte = function (a) {
+	return {$: 'AngezeigteKarte', a: a};
 };
 var $author$project$Main$SpionErmittelt = function (a) {
 	return {$: 'SpionErmittelt', a: a};
@@ -10862,17 +10814,6 @@ var $author$project$Main$SpionErmittelt = function (a) {
 var $author$project$Main$VerdeckteKarte = function (a) {
 	return {$: 'VerdeckteKarte', a: a};
 };
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -10963,6 +10904,15 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
 	var state = _v0.a;
@@ -11001,208 +10951,16 @@ var $elm$random$Random$int = F2(
 				}
 			});
 	});
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'NeueSpielerzahl':
 				var n = msg.a;
-				var neueZahl = (n < 3) ? 3 : n;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{
-							anzahlSpieler: neueZahl,
-							anzahlSpione: (_Utils_cmp(
-								model.anzahlSpione,
-								$author$project$Main$maxAnzahlSpione(neueZahl)) > 0) ? $author$project$Main$maxAnzahlSpione(neueZahl) : model.anzahlSpione,
-							buerger: A2($elm$core$List$range, 1, neueZahl)
-						}),
-					$elm$core$Platform$Cmd$none);
-			case 'NeueSpionzahl':
-				var n = msg.a;
-				var neueZahl = (n < 1) ? 1 : ((_Utils_cmp(
-					n,
-					$author$project$Main$maxAnzahlSpione(model.anzahlSpieler)) > 0) ? $author$project$Main$maxAnzahlSpione(model.anzahlSpieler) : n);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{anzahlSpione: neueZahl}),
-					$elm$core$Platform$Cmd$none);
-			case 'NeueZeit':
-				var n = msg.a;
-				var neueZeit = (n < 60) ? 60 : n;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{zeit: neueZeit}),
-					$elm$core$Platform$Cmd$none);
-			case 'NeueKategorie':
-				var k = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							begriffe: A2(
-								$elm$core$Maybe$withDefault,
-								_List_Nil,
-								A2($elm$core$Dict$get, k, $author$project$Main$kategorien)),
-							kategorie: k
+							anzahlSpieler: (n < 3) ? 3 : n
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'Starten':
@@ -11211,72 +10969,20 @@ var $author$project$Main$update = F2(
 						model,
 						{
 							aktuellerBegriff: $elm$core$List$head(model.begriffe),
+							begriffe: A2($elm$core$List$drop, 1, model.begriffe),
 							restzeit: model.zeit,
-							status: $author$project$Main$VerdeckteKarte(1)
+							status: $author$project$Main$AngezeigteKarte(1)
 						}),
 					A2(
 						$elm$random$Random$generate,
 						$author$project$Main$SpionErmittelt,
-						A2(
-							$elm$random$Random$int,
-							1,
-							$elm$core$List$length(model.buerger))));
+						A2($elm$random$Random$int, 1, model.anzahlSpieler)));
 			case 'SpionErmittelt':
 				var n = msg.a;
-				var neueSpione = _Utils_ap(
-					model.spione,
-					A2(
-						$elm$core$List$take,
-						1,
-						A2($elm$core$List$drop, n - 1, model.buerger)));
-				var neueBuerger = A2(
-					$elm$core$List$filter,
-					function (x) {
-						return !A2($elm$core$List$member, x, neueSpione);
-					},
-					model.buerger);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{buerger: neueBuerger, spione: neueSpione}),
-					(_Utils_cmp(
-						$elm$core$List$length(neueSpione),
-						model.anzahlSpione) < 0) ? A2(
-						$elm$random$Random$generate,
-						$author$project$Main$SpionErmittelt,
-						A2(
-							$elm$random$Random$int,
-							1,
-							$elm$core$List$length(neueBuerger))) : A2(
-						$elm$random$Random$generate,
-						$author$project$Main$BegriffErmittelt,
-						A2(
-							$elm$random$Random$int,
-							1,
-							$elm$core$List$length(model.begriffe))));
-			case 'BegriffErmittelt':
-				var n = msg.a;
-				var neuerBegriff = $elm$core$List$head(
-					A2($elm$core$List$drop, n - 1, model.begriffe));
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							aktuellerBegriff: neuerBegriff,
-							begriffe: function () {
-								if (neuerBegriff.$ === 'Nothing') {
-									return model.begriffe;
-								} else {
-									var b = neuerBegriff.a;
-									return A2(
-										$elm$core$List$filter,
-										function (x) {
-											return !_Utils_eq(x, b);
-										},
-										model.begriffe);
-								}
-							}()
-						}),
+						{spion: n}),
 					$elm$core$Platform$Cmd$none);
 			case 'ZeigeKarte':
 				var n = msg.a;
@@ -11284,7 +10990,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							status: $author$project$Main$OffeneKarte(n)
+							status: $author$project$Main$AngezeigteKarte(n)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 'VerdeckeKarte':
@@ -11312,18 +11018,7 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 			default:
 				return _Utils_Tuple2(
-					{
-						aktuellerBegriff: $elm$core$Maybe$Nothing,
-						anzahlSpieler: model.anzahlSpieler,
-						anzahlSpione: model.anzahlSpione,
-						begriffe: model.begriffe,
-						buerger: A2($elm$core$List$range, 1, model.anzahlSpieler),
-						kategorie: model.kategorie,
-						restzeit: 0,
-						spione: _List_Nil,
-						status: $author$project$Main$Vorbereitung,
-						zeit: model.zeit
-					},
+					{aktuellerBegriff: $elm$core$Maybe$Nothing, anzahlSpieler: model.anzahlSpieler, begriffe: model.begriffe, restzeit: 0, spion: 1, status: $author$project$Main$Vorbereitung, zeit: model.zeit},
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -11337,54 +11032,6 @@ var $author$project$Main$ZeigeKarte = function (a) {
 };
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
-var $author$project$Main$NeueKategorie = function (a) {
-	return {$: 'NeueKategorie', a: a};
-};
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
-var $author$project$Main$stringToOption = F2(
-	function (kat, s) {
-		return A2(
-			$elm$html$Html$option,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$value(s),
-					$elm$html$Html$Attributes$selected(
-					_Utils_eq(kat, s))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(s)
-				]));
-	});
-var $author$project$Main$viewKategorien = F2(
-	function (aktuelleKategorie, kategorienliste) {
-		return A2(
-			$elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$select,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onInput($author$project$Main$NeueKategorie)
-						]),
-					A2(
-						$elm$core$List$map,
-						$author$project$Main$stringToOption(aktuelleKategorie),
-						kategorienliste))
-				]));
-	});
 var $author$project$Main$NeueSpielerzahl = function (a) {
 	return {$: 'NeueSpielerzahl', a: a};
 };
@@ -11430,96 +11077,6 @@ var $author$project$Main$viewSpielerinfo = function (anzahl) {
 				$elm$html$Html$text(' Spieler')
 			]));
 };
-var $author$project$Main$NeueSpionzahl = function (a) {
-	return {$: 'NeueSpionzahl', a: a};
-};
-var $author$project$Main$viewSpioninfo = function (anzahl) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('zahlMitButtons')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NeueSpionzahl(anzahl - 1))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('-')
-					])),
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(anzahl))
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NeueSpionzahl(anzahl + 1))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('+')
-					])),
-				$elm$html$Html$text(' Spione')
-			]));
-};
-var $author$project$Main$NeueZeit = function (a) {
-	return {$: 'NeueZeit', a: a};
-};
-var $author$project$Main$viewZeit = function (minuten) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('zahlMitButtons')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NeueZeit((minuten * 60) - 60))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('-')
-					])),
-				A2(
-				$elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(minuten))
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NeueZeit((minuten * 60) + 60))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('+')
-					])),
-				$elm$html$Html$text(' Minuten')
-			]));
-};
 var $author$project$Main$view = function (model) {
 	var _v0 = model.status;
 	switch (_v0.$) {
@@ -11553,12 +11110,6 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('SpyGame')
 							])),
 						$author$project$Main$viewSpielerinfo(model.anzahlSpieler),
-						$author$project$Main$viewSpioninfo(model.anzahlSpione),
-						$author$project$Main$viewZeit((model.zeit / 60) | 0),
-						A2(
-						$author$project$Main$viewKategorien,
-						model.kategorie,
-						$elm$core$Dict$keys($author$project$Main$kategorien)),
 						A2(
 						$elm$html$Html$button,
 						_List_fromArray(
@@ -11570,7 +11121,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('Los geht\'s')
 							]))
 					]));
-		case 'OffeneKarte':
+		case 'AngezeigteKarte':
 			var n = _v0.a;
 			return A2(
 				$elm$html$Html$div,
@@ -11585,7 +11136,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text(
 								'Spieler ' + $elm$core$String$fromInt(n))
 							])),
-						A2($elm$core$List$member, n, model.spione) ? A2(
+						_Utils_eq(n, model.spion) ? A2(
 						$elm$html$Html$p,
 						_List_fromArray(
 							[
@@ -11698,7 +11249,7 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"NeueSpionzahl":["Basics.Int"],"NeueZeit":["Basics.Int"],"NeueKategorie":["String.String"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"BegriffErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"NeueSpielerzahl":["Basics.Int"],"Starten":[],"ZeigeKarte":["Basics.Int"],"VerdeckeKarte":["Basics.Int"],"SpionErmittelt":["Basics.Int"],"Tick":["Time.Posix"],"Reset":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}}}}})}});
 
 //////////////////// HMR BEGIN ////////////////////
 

@@ -1,7 +1,6 @@
 module Main exposing (..)
 
 import Browser exposing (..)
-import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -12,12 +11,9 @@ import Time
 type alias Model =
     { status : Status
     , anzahlSpieler : Int
-    , anzahlSpione : Int
-    , kategorie : String
     , begriffe : List String
     , aktuellerBegriff : Maybe String
-    , spione : List Int
-    , buerger : List Int
+    , spion : Int
     , zeit : Int
     , restzeit : Int
     }
@@ -25,50 +21,28 @@ type alias Model =
 
 type Msg
     = NeueSpielerzahl Int
-    | NeueSpionzahl Int
-    | NeueZeit Int
-    | NeueKategorie String
     | Starten
     | ZeigeKarte Int
     | VerdeckeKarte Int
     | SpionErmittelt Int
-    | BegriffErmittelt Int
     | Tick Time.Posix
     | Reset
 
 
 type Status
     = Vorbereitung
+    | AngezeigteKarte Int
     | VerdeckteKarte Int
-    | OffeneKarte Int
     | Countdown
-
-
-kategorien : Dict String (List String)
-kategorien =
-    Dict.fromList
-        [ ( "Standort"
-          , [ "Flughafen", "Schule", "Büro", "Kino", "Café", "Restaurant", "Bibliothek", "Park", "Krankenhaus", "Supermarkt", "Einkaufszentrum", "Fitnessstudio", "Schwimmbad", "Theater", "Museum", "Zoo", "Bahnhof", "Tankstelle", "Post", "Friseur", "Apotheke", "Spielplatz", "Stadion", "Kirche", "Tempel", "Moschee", "Kunstgalerie", "Marktplatz", "Strand", "Berg", "See", "Campingplatz", "Bücherei", "Klinik", "Tierheim", "Schloss", "Festplatz", "Botanischer Garten", "Aquarium", "Planetarium", "Hochschule", "Universität", "Messegelände", "Gärtnerei", "Weingut", "Brauerei", "Kochschule", "Fahrradverleih", "Autovermietung", "Reisebüro", "Kunstschule", "Musikschule", "Tanzschule", "Tierschutzverein", "Seniorenheim", "Jugendzentrum", "Schneiderei", "Schreinerei", "Bäckerei", "Metzgerei", "Pferdestall", "Golfplatz", "Tennisplatz", "Skihütte", "Ferienhaus", "Hütte", "Wellness-Oase", "Sauna", "Wildpark", "Abenteuerspielplatz", "Hochseilgarten", "Escape Room", "Kletterhalle", "Laser-Tag-Arena", "Bowlingbahn", "Billardcafé", "Karaokebar", "Disco", "Weihnachtsmarkt", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt" ]
-          )
-        , ( "Beruf"
-          , [ "Lehrer", "Arzt", "Krankenschwester", "Polizist", "Feuerwehrmann", "Koch", "Kellner", "Bäcker", "Metzger", "Frisör", "Maler", "Schreiner", "Elektriker", "Maurer", "Gärtner", "Winzer", "Brauer", "Künstler", "Musiker", "Tänzer", "Schauspieler", "Tierpfleger", "Tierarzt", "Altenpfleger", "Jugendbetreuer", "Schneider", "Buchhalter", "Informatiker", "Biologe", "Kinderarzt", "Burger-Verkäufer", "Entsorgungsspezialist", "Autoverkäufer", "Reiseleiter", "Tanzlehrer", "Steuerberater" ]
-          )
-        , ( "Hobby"
-          , [ "Fußball", "Tennis", "Golf", "Schwimmen", "Laufen", "Radfahren", "Klettern", "Wandern", "Skifahren", "Snowboarden", "Surfen", "Segeln", "Tauchen", "Reiten", "Tanzen", "Musizieren", "Malen", "Zeichnen", "Basteln", "Stricken", "Nähen", "Kochen", "Backen", "Gärtnern", "Fotografieren", "Filmen", "Lesen", "Schreiben", "Theater", "Kino", "Musical", "Konzert", "Oper", "Museum", "Ausstellung", "Flohmarkt", "Kunstmarkt", "Handwerksmarkt", "Weihnachtsmarkt", "Karneval", "Lesen", "Schreiben", "Theater", "Kino", "Musical", "Konzert" ]
-          )
-        ]
 
 
 initialModel : Model
 initialModel =
-    { anzahlSpieler = 5
-    , anzahlSpione = maxAnzahlSpione 5
-    , kategorie = kategorien |> Dict.keys |> List.head |> Maybe.withDefault "Keine Kategorie"
-    , begriffe = kategorien |> Dict.get (kategorien |> Dict.keys |> List.head |> Maybe.withDefault "Keine Kategorie") |> Maybe.withDefault []
-    , status = Vorbereitung
+    { status = Vorbereitung
+    , anzahlSpieler = 5
+    , begriffe = [ "Flughafen", "Schule", "Büro", "Kino", "Café" ]
     , aktuellerBegriff = Nothing
-    , buerger = List.range 1 5
-    , spione = []
+    , spion = 1
     , zeit = 180
     , restzeit = 0
     }
@@ -81,58 +55,13 @@ init _ =
     )
 
 
-maxAnzahlSpione : Int -> Int
-maxAnzahlSpione spieler =
-    round (toFloat spieler / 3)
-
-
-viewEintrag e =
-    li [] [ text e ]
-
-
-viewEintraege liste =
-    div []
-        [ ul [] (List.map viewEintrag liste)
-        ]
-
-
+viewSpielerinfo : Int -> Html Msg
 viewSpielerinfo anzahl =
     div [ class "zahlMitButtons" ]
         [ button [ onClick (NeueSpielerzahl (anzahl - 1)) ] [ text "-" ]
         , span [] [ text (String.fromInt anzahl) ]
         , button [ onClick (NeueSpielerzahl (anzahl + 1)) ] [ text "+" ]
         , text " Spieler"
-        ]
-
-
-viewSpioninfo anzahl =
-    div [ class "zahlMitButtons" ]
-        [ button [ onClick (NeueSpionzahl (anzahl - 1)) ] [ text "-" ]
-        , span [] [ text (String.fromInt anzahl) ]
-        , button [ onClick (NeueSpionzahl (anzahl + 1)) ] [ text "+" ]
-        , text " Spione"
-        ]
-
-
-viewZeit minuten =
-    div [ class "zahlMitButtons" ]
-        [ button [ onClick (NeueZeit (minuten * 60 - 60)) ] [ text "-" ]
-        , span [] [ text (String.fromInt minuten) ]
-        , button [ onClick (NeueZeit (minuten * 60 + 60)) ] [ text "+" ]
-        , text " Minuten"
-        ]
-
-
-stringToOption : String -> String -> Html Msg
-stringToOption kat s =
-    option [ value s, selected (kat == s) ] [ text s ]
-
-
-viewKategorien : String -> List String -> Html Msg
-viewKategorien aktuelleKategorie kategorienliste =
-    div []
-        [ select [ onInput NeueKategorie ]
-            (List.map (stringToOption aktuelleKategorie) kategorienliste)
         ]
 
 
@@ -149,17 +78,14 @@ view model =
                  else
                     [ h1 [] [ text "SpyGame" ]
                     , viewSpielerinfo model.anzahlSpieler
-                    , viewSpioninfo model.anzahlSpione
-                    , viewZeit (model.zeit // 60)
-                    , viewKategorien model.kategorie (kategorien |> Dict.keys)
                     , button [ onClick Starten ] [ text "Los geht's" ]
                     ]
                 )
 
-        OffeneKarte n ->
+        AngezeigteKarte n ->
             div []
                 [ h2 [] [ text ("Spieler " ++ String.fromInt n) ]
-                , if List.member n model.spione then
+                , if n == model.spion then
                     p [ class "begriff" ] [ text "Spion" ]
 
                   else
@@ -191,108 +117,32 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NeueSpielerzahl n ->
-            let
-                neueZahl =
+            ( { model
+                | anzahlSpieler =
                     if n < 3 then
                         3
 
                     else
                         n
-            in
-            ( { model
-                | anzahlSpieler = neueZahl
-                , buerger = List.range 1 neueZahl
-                , anzahlSpione =
-                    if model.anzahlSpione > maxAnzahlSpione neueZahl then
-                        maxAnzahlSpione neueZahl
-
-                    else
-                        model.anzahlSpione
-              }
-            , Cmd.none
-            )
-
-        NeueSpionzahl n ->
-            let
-                neueZahl =
-                    if n < 1 then
-                        1
-
-                    else if n > maxAnzahlSpione model.anzahlSpieler then
-                        maxAnzahlSpione model.anzahlSpieler
-
-                    else
-                        n
-            in
-            ( { model | anzahlSpione = neueZahl }, Cmd.none )
-
-        NeueZeit n ->
-            let
-                neueZeit =
-                    if n < 60 then
-                        60
-
-                    else
-                        n
-            in
-            ( { model | zeit = neueZeit }, Cmd.none )
-
-        NeueKategorie k ->
-            ( { model
-                | kategorie = k
-                , begriffe = kategorien |> Dict.get k |> Maybe.withDefault []
               }
             , Cmd.none
             )
 
         Starten ->
             ( { model
-                | status = VerdeckteKarte 1
+                | status = AngezeigteKarte 1
                 , aktuellerBegriff = model.begriffe |> List.head
+                , begriffe = model.begriffe |> List.drop 1
                 , restzeit = model.zeit
               }
-            , Random.generate SpionErmittelt (Random.int 1 (List.length model.buerger))
+            , Random.generate SpionErmittelt (Random.int 1 model.anzahlSpieler)
             )
 
         SpionErmittelt n ->
-            let
-                neueSpione =
-                    model.spione ++ (List.drop (n - 1) model.buerger |> List.take 1)
-
-                neueBuerger =
-                    List.filter (\x -> not (List.member x neueSpione)) model.buerger
-            in
-            ( { model
-                | spione = neueSpione
-                , buerger = neueBuerger
-              }
-            , if List.length neueSpione < model.anzahlSpione then
-                Random.generate SpionErmittelt (Random.int 1 (neueBuerger |> List.length))
-
-              else
-                Random.generate BegriffErmittelt (Random.int 1 (model.begriffe |> List.length))
-            )
-
-        BegriffErmittelt n ->
-            let
-                neuerBegriff =
-                    model.begriffe |> List.drop (n - 1) |> List.head
-            in
-            ( { model
-                | aktuellerBegriff = neuerBegriff
-                , begriffe =
-                    case neuerBegriff of
-                        Nothing ->
-                            model.begriffe
-
-                        Just b ->
-                            List.filter (\x -> x /= b) model.begriffe
-              }
-            , Cmd.none
-            )
+            ( { model | spion = n }, Cmd.none )
 
         ZeigeKarte n ->
-            ( { model | status = OffeneKarte n }
+            ( { model | status = AngezeigteKarte n }
             , Cmd.none
             )
 
@@ -313,12 +163,9 @@ update msg model =
         Reset ->
             ( { anzahlSpieler = model.anzahlSpieler
               , begriffe = model.begriffe
-              , kategorie = model.kategorie
               , status = Vorbereitung
               , aktuellerBegriff = Nothing
-              , buerger = List.range 1 model.anzahlSpieler
-              , anzahlSpione = model.anzahlSpione
-              , spione = []
+              , spion = 1
               , zeit = model.zeit
               , restzeit = 0
               }
